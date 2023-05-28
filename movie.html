@@ -1,50 +1,73 @@
-<!-- movie.html -->
-
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Movie Details</title>
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="movie-style.css">
 </head>
+
 <body>
-  <header>
-    <nav>
-      <div class="logo">
-        <a href="#" class="active">Movie Search</a>
+  <div id="moviePage" class="container">
+    <div class="movie-details">
+      <div class="movie-image">
+        <img id="movieImage" src="" alt="">
       </div>
-      <div class="theme-toggle">
-        <label class="switch">
-          <input type="checkbox" id="themeToggle">
-          <span class="slider round"></span>
-        </label>
-      </div>
-      <div class="user-profile">
-        <a href="#" class="initial">JD</a> <!-- Replace JD with user's initials -->
-      </div>
-    </nav>
-  </header>
-
-  <main>
-    <section class="movie-details">
       <div class="movie-info">
-        <img id="moviePoster" src="" alt="Movie Poster">
-        <h2 id="movieTitle"></h2>
+        <h1 id="movieTitle"></h1>
         <p id="movieOverview"></p>
-        <p id="movieRating"></p>
-        <!-- Add other movie details here -->
+        <p id="voteAverage"></p>
+        <p id="voteCount"></p>
+        <button id="bookmarkButton">Bookmark</button>
       </div>
-      <div class="bookmark-button">
-        <button id="bookmarkBtn">Bookmark</button>
-      </div>
-    </section>
-  </main>
+    </div>
+  </div>
 
-  <footer>
-    <!-- Add your footer content here -->
-  </footer>
+  <script>
+    // Function to fetch movie details from TMDB API
+    async function fetchMovieDetails(movieId) {
+      const apiKey = '8dd735e87f128347ce5e73da06811ded'; // Replace with your TMDB API key
+      const response = await fetch(`https://api.themoviedb.org/3/movie/${movieId}?api_key=${apiKey}`);
+      const data = await response.json();
+      return data;
+    }
 
-  <script src="script.js"></script>
+    // Function to display movie details on the page
+    function displayMovieDetails(movie) {
+      const movieImage = document.getElementById('movieImage');
+      const movieTitle = document.getElementById('movieTitle');
+      const movieOverview = document.getElementById('movieOverview');
+      const voteAverage = document.getElementById('voteAverage');
+      const voteCount = document.getElementById('voteCount');
+
+      movieImage.src = `https://image.tmdb.org/t/p/w500/${movie.poster_path}`;
+      movieImage.alt = movie.original_title;
+      movieTitle.textContent = movie.original_title;
+      movieOverview.textContent = movie.overview;
+      voteAverage.textContent = `Vote Average: ${movie.vote_average}`;
+      voteCount.textContent = `Vote Count: ${movie.vote_count}`;
+    }
+
+    // Function to extract movie ID from URL
+    function getMovieIdFromURL() {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get("id");
+    }
+
+    // Get movie ID from URL
+    const movieId = getMovieIdFromURL();
+
+    // Fetch movie details and display them on the page
+    fetchMovieDetails(movieId)
+      .then((movie) => {
+        displayMovieDetails(movie);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  </script>
 </body>
+
 </html>

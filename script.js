@@ -1,31 +1,9 @@
-// script.js
+const apiKey = '8dd735e87f128347ce5e73da06811ded';
 
-// API key for TMDB
-require('dotenv').config();
-const API_KEY = process.env.API_KEY;
+const searchInput = document.getElementById('searchInput');
+const searchButton = document.getElementById('searchButton');
 
-// Function to search movies
-async function searchMovies() {
-  const searchInput = document.getElementById('searchInput');
-  const query = searchInput.value;
-
-  // Clear previous search results
-  const searchResults = document.getElementById('searchResults');
-  searchResults.innerHTML = '';
-
-  try {
-    const response = await fetch(`https://api.themoviedb.org/3/search/movie?api_key=${API_KEY}&query=${query}`);
-    const data = await response.json();
-    const movies = data.results;
-
-    movies.forEach(movie => {
-      const movieCard = createMovieCard(movie);
-      searchResults.appendChild(movieCard);
-    });
-  } catch (error) {
-    console.error(error);
-  }
-}
+searchButton.addEventListener('click', searchMovies);
 
 // Function to create a movie card
 function createMovieCard(movie) {
@@ -44,7 +22,7 @@ function createMovieCard(movie) {
   movieCard.appendChild(movieTitle);
 
   const movieYear = document.createElement('p');
-  movieYear.textContent = release_date.substring(0, 4);
+  movieYear.textContent = release_date ? release_date.substring(0, 4) : 'N/A';
   movieCard.appendChild(movieYear);
 
   // Add click event listener to navigate to movie details page
@@ -55,44 +33,60 @@ function createMovieCard(movie) {
   return movieCard;
 }
 
-// Function to get movie details
-async function getMovieDetails() {
-  const urlParams = new URLSearchParams(window.location.search);
-  const movieId = urlParams.get('id');
+// Function to display search results
+function displaySearchResults(movies) {
+  const searchResults = document.getElementById('searchResults');
+  searchResults.innerHTML = '';
+
+  movies.forEach(movie => {
+    const movieCard = createMovieCard(movie);
+    searchResults.appendChild(movieCard);
+  });
+}
+
+// Function to search movies
+async function searchMovies() {
+  const query = searchInput.value;
+
+  // Clear previous search results
+  const searchResults = document.getElementById('searchResults');
+  searchResults.innerHTML = '';
+
+  
+  const newUrl = new URL(window.location.href);
+  newUrl.searchParams.set('query', query);
+  window.history.pushState({ path: newUrl.href }, '', newUrl.href);
 
   try {
-    const response = await fetch(`https://api.themoviedb.org/3/movie/${movieId}?api_key=${API_KEY}`);
-    const movie = await response.json();
+    const response = await fetch(
+      `https://api.themoviedb.org/3/search/movie?api_key=${apiKey}&query=${query}`
+    );
+    const data = await response.json();
+    const movies = data.results;
 
-    displayMovieDetails(movie);
+    displaySearchResults(movies);
   } catch (error) {
-    console.error(error);
   }
 }
 
-// Function to display movie details
-function displayMovieDetails(movie) {
-  const { title, overview, poster_path, vote_average } = movie;
+// Add an event listener to the search input to trigger the fetchMovies function on pressing enter key
+searchInput.addEventListener("keyup", (event) => { // Added an event listener to the search input
+    if (event.key === "Enter") { // Checked if the key code is equal to 13 (enter key)
+    event.preventDefault(); // Prevented the default action of the event
+    searchButton.click(); // Triggered a click on the search button
+    }
+    });
 
-  const moviePoster = document.getElementById('moviePoster');
-  moviePoster.src = `https://image.tmdb.org/t/p/w500${poster_path}`;
-
-  const movieTitle = document.getElementById('movieTitle');
-  movieTitle.textContent = title;
-
-  const movieOverview = document.getElementById('movieOverview');
-  movieOverview.textContent = overview;
-
-  const movieRating = document.getElementById('movieRating');
-  movieRating.textContent = `Rating: ${vote_average}/10`;
-}
-
-// Toggle theme between light and dark mode
-function toggleTheme() {
-  const body = document.body;
-  body.classList.toggle('dark-mode');
-}
-
-// Event listener for theme toggle
-const themeToggle = document.getElementById('themeToggle');
-themeToggle.addEventListener('change', toggleTheme);
+// Handle URL changes
+window.onpopstate = function(event) {
+    // Extract the search query from the URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const query = urlParams.get('query');
+  
+    // Set the search query in the input field
+    document.getElementById('search-input').value = query;
+  
+    // Perform the search API request and display the results
+    // ...
+  };
+  

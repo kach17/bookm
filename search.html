@@ -1,48 +1,32 @@
-<!-- search.html -->
-
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Search Movies</title>
+  <title>Bookmark App</title>
   <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
-  <header>
-    <nav>
-      <div class="logo">
-        <a href="#" class="active">Movie Search</a>
-      </div>
-      <div class="theme-toggle">
-        <label class="switch">
-          <input type="checkbox" id="themeToggle">
-          <span class="slider round"></span>
-        </label>
-      </div>
-      <div class="user-profile">
-        <a href="#" class="initial">KC</a> <!-- Replace JD with user's initials -->
-      </div>
-    </nav>
-  </header>
+  <div class="nav">
+    <div class="container">
+      <span class="logo">Bookmark App</span>
+    </div>
+</div>
 
-  <main>
-    <section class="search-form">
-      <h2>Search Movies</h2>
-      <div class="search-bar">
-        <input type="text" id="searchInput" placeholder="Enter a movie title...">
-        <button type="submit" onclick="searchMovies()">Search</button>
-      </div>
-      <div id="searchResults" class="movie-grid">
-        <!-- Movie search results will be dynamically added here -->
-      </div>
-    </section>
-  </main>
+  <div class="container">
 
-  <footer>
-    <!-- Add your footer content here -->
-  </footer>
+    <div class="title">Movie Search App</div>
+    <div class="search">
+        <input type="text" id="searchInput" class="searchInput" placeholder="Enter a movie title...">
+        <button id="searchButton" class="searchButton">Search</button>
+    </div>
+
+    <div id="searchResults" class="results-container"></div>
+  </div>
 
   <script src="script.js"></script>
 </body>
+
 </html>
